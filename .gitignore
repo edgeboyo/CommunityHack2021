@@ -6,7 +6,7 @@ node_modules
 !.gitignore
 
 # JS files
-*.js
+build
 
 # Dotenv
 !.env.sample
