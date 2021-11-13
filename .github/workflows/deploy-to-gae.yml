@@ -36,7 +36,9 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_CLOUD_CREDS }}
           
       - name: Save .env file
-        run: echo GOOGLE_MAPS_API_KEY=${ secrets.GOOGLE_API_KEY } > .env
+        run: |
+          touch .env
+          echo GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
           
       # Runs a set of commands using the runners shell
       - name: Deploy project
