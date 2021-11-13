@@ -28,7 +28,8 @@ app.listen(PORT, () => {
 // [END gae_node_request_example]
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/client/index.html"));
+  console.log(req.originalUrl);
+  res.sendFile(path.join(__dirname + `/client${req.originalUrl}`));
 });
 
 /*

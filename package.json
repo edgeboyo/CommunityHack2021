@@ -16,7 +16,7 @@
     "start": "npm run build && node ./build/app.js",
     "build": "npx tsc && npm run buildClient",
     "buildClient": "cd client && npm run build && cp -r build ../build/client",
-    "watch": "tsc-watch --onSuccess \"cd client && npm run build && node ./build/app.js\"",
+    "watch": "tsc-watch --onSuccess \"node ./build/app.js\"",
     "test": "mocha --exit test/*.test.js",
     "deploy": "gcloud app deploy --version main"
   },
