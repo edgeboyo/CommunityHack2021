@@ -10,3 +10,6 @@ build
 
 # Dotenv
 !.env.sample
+
+# Access key
+access-key.json
