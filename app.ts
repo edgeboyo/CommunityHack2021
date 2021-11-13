@@ -2,6 +2,7 @@ import express from "express";
 import { config } from "dotenv";
 import { setUpApi } from "./api/api";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 import { start } from "@google-cloud/debug-agent";
 
@@ -10,6 +11,8 @@ config();
 
 export const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {

@@ -4,12 +4,9 @@ import { Datastore } from "@google-cloud/datastore";
 import crypto from "crypto";
 import { RawUser, User } from "../data/User";
 import { checkFields, ret } from "../utils";
+import { checkLoginCookie } from "./cookies";
 
 const datastore = new Datastore();
-
-async function apiDebug(req: any, res: any) {
-  return ret(res, "Nothing");
-}
 
 function hash256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
@@ -125,6 +122,7 @@ async function createUser(req: any, res: any) {
 }
 
 async function login(req: any, res: any) {
+  console.log(req.cookies);
   const user: RawUser = req.body;
 
   const requiredFields = ["username", "rawPassword"];
@@ -134,6 +132,13 @@ async function login(req: any, res: any) {
     return ret(res, `Missing field(s) ${JSON.stringify(fieldAudit)}`, 401);
   }
 
+  if (await checkLoginCookie(user.username, req.cookies))
+    return ret(res, "User already logged in");
+
+  const token = await logToken(user.username);
+  console.log(token);
+  res.cookie("token", token);
+
   if (await checkUser(user.username, user.rawPassword)) {
     return ret(res, "User logged-in successfully");
   } else {
@@ -141,9 +146,28 @@ async function login(req: any, res: any) {
   }
 }
 
-export function setUpUserApi(app: any) {
-  app.get("/api/", apiDebug);
+async function logToken(username: string) {
+  const kind = "tokens";
 
+  const key = datastore.key([kind, username]);
+
+  const token = crypto.randomBytes(20).toString("hex");
+
+  const tokenObj = {
+    key,
+    data: {
+      username,
+      token,
+      setTime: new Date().getTime(),
+    },
+  };
+
+  await datastore.save(tokenObj);
+
+  return token;
+}
+
+export function setUpUserApi(app: any) {
   app.get("/api/users/", login);
 
   app.post("/api/users/", createUser);
