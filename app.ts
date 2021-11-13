@@ -1,4 +1,5 @@
 import express from "express";
+import {Client} from "@googlemaps/google-maps-services-js";
 
 const app = express();
 
@@ -14,4 +15,32 @@ app.listen(PORT, () => {
 });
 // [END gae_node_request_example]
 
-module.exports = app;
+/*
+let map: google.maps.Map;
+const center: google.maps.LatLngLiteral = {lat: 50.937349, lng: -1.397909};
+
+function initMap(): void {
+    map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
+        center,
+        zoom: 8
+    });
+}
+*/
+
+
+const client = new Client({});
+
+client
+    .elevation({
+      params: {
+        locations: [{ lat: 50.937349, lng: -1.397909 }],
+        key: "AIzaSyBrKxAzgRxjQLebkixdmaTHHC7e9kB1rjo",
+      },
+      timeout: 1000, // milliseconds
+    })
+    .then((r) => {
+      console.log(r.data.results[0].elevation);
+    })
+    .catch((e) => {
+      console.log(e.response.data.error_message);
+    });
