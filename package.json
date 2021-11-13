@@ -13,9 +13,9 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "start": "npm run build && jsx --run ./build/app.jsx",
+    "start": "npm run build && node ./build/app.js",
     "build": "npx tsc",
-    "watch": "tsc-watch --onSuccess \"node ./build/app.jsx\"",
+    "watch": "tsc-watch --onSuccess \"node ./build/app.js\"",
     "test": "mocha --exit test/*.test.js",
     "deploy": "gcloud app deploy --version main"
   },
