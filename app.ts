@@ -1,8 +1,7 @@
 import express from "express";
-import { Client } from "@googlemaps/google-maps-services-js";
-
 import { config } from "dotenv";
 import { setUpApi } from "./api/api";
+import path from "path";
 
 import { start } from "@google-cloud/debug-agent";
 
@@ -11,33 +10,28 @@ config();
 
 export const app = express();
 app.use(express.json());
+const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hello, world!").end();
+  res.status(200).send("Hello world!").end();
 });
 
 setUpApi(app);
 
 // Start the server
-const PORT = process.env.PORT || 8080;
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log("Press Ctrl+C to quit.");
 });
 // [END gae_node_request_example]
 
+app.get("*", (req, res) => {
+  console.log(req.originalUrl);
+  res.sendFile(path.join(__dirname + `/client${req.originalUrl}`));
+});
+
 /*
-let map: google.maps.Map;
-const center: google.maps.LatLngLiteral = {lat: 50.937349, lng: -1.397909};
-
-function initMap(): void {
-    map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-        center,
-        zoom: 8
-    });
-}
-*/
-
 const client = new Client({});
 
 client
@@ -54,3 +48,28 @@ client
   .catch((e) => {
     console.log(e.response.data.error_message);
   });
+
+
+const source = {
+    html: `<iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJKeyH6vVzdEgRVp9Uu4KZl1M&key=AIzaSyBmoJGxjYSO1MToeKhfM9Cz6-dMB4i2-Tg"></iframe>`
+};
+*/
+
+/*
+const source = {
+    html: `
+<p style='text-align:center;'>
+  Hello Woarld!
+</p>`
+};
+
+export default function App() {
+    const { width } = useWindowDimensions();
+    return (
+        <RenderHtml
+            contentWidth={width}
+            source={source}
+        />
+    );
+}
+*/
