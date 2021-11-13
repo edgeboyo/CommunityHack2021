@@ -2,6 +2,7 @@ import express from "express";
 import { Client } from "@googlemaps/google-maps-services-js";
 
 import { config } from "dotenv";
+import { apiDebug } from "./api/api";
 
 config();
 
@@ -10,6 +11,8 @@ export const app = express();
 app.get("/", (req, res) => {
   res.status(200).send("Hello, world!").end();
 });
+
+app.get("/api/", apiDebug);
 
 // Start the server
 const PORT = process.env.PORT || 8080;
