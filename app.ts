@@ -4,6 +4,9 @@ import { Client } from "@googlemaps/google-maps-services-js";
 import { config } from "dotenv";
 import { setUpApi } from "./api/api";
 
+import { start } from "@google-cloud/debug-agent";
+
+start({ serviceContext: { enableCanary: true } });
 config();
 
 export const app = express();

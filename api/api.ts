@@ -3,6 +3,7 @@ import { Datastore } from "@google-cloud/datastore";
 
 import crypto from "crypto";
 import { RawUser, User } from "../data/User";
+import { checkFileds } from "../utils";
 
 const datastore = new Datastore();
 
@@ -20,7 +21,7 @@ async function checkUser(
 ): Promise<boolean> {
   const kind = "users";
 
-  const key = datastore.key([kind, "edgeboyo"]);
+  const key = datastore.key([kind, username]);
 
   const response = await datastore.get(key);
 
@@ -32,7 +33,7 @@ async function checkUser(
   if (password != undefined) {
     const passwordHash = hash256(password);
 
-    if (password !== user.password) {
+    if (passwordHash !== user.password) {
       return false;
     }
   }
@@ -44,6 +45,16 @@ async function createUser(req: any, res: any) {
   const kind = "users";
 
   const user: RawUser = req.body;
+
+  const requiredFields = ["username", "email", "rawPassword"];
+
+  const fieldAudit = checkFileds(requiredFields, user);
+  if (fieldAudit.length !== 0) {
+    return res
+      .status(401)
+      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
+      .end();
+  }
 
   if (await checkUser(user.username)) {
     return res.status(409).send("This user already exists").end();
@@ -74,8 +85,18 @@ async function createUser(req: any, res: any) {
 async function login(req: any, res: any) {
   const user: RawUser = req.body;
 
+  const requiredFields = ["username", "rawPassword"];
+
+  const fieldAudit = checkFileds(requiredFields, user);
+  if (fieldAudit.length !== 0) {
+    return res
+      .status(401)
+      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
+      .end();
+  }
+
   if (await checkUser(user.username, user.rawPassword)) {
-    return res.status(200).send("User created successfully").end();
+    return res.status(200).send("User logged-in successfully").end();
   } else {
     return res.status(401).send("Unauthorized").end();
   }
@@ -84,7 +105,7 @@ async function login(req: any, res: any) {
 export function setUpApi(app: any) {
   app.get("/api/", apiDebug);
 
-  app.post("/api/users/", createUser);
-
   app.get("/api/users/", login);
+
+  app.post("/api/users/", createUser);
 }
