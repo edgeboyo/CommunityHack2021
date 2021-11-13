@@ -1,40 +1,90 @@
 import { app } from "../app";
 import { Datastore } from "@google-cloud/datastore";
 
+import crypto from "crypto";
+import { RawUser, User } from "../data/User";
+
 const datastore = new Datastore();
 
 async function apiDebug(req: any, res: any) {
-  // Creates a client
-  const datastore = new Datastore();
+  return res.status(200).send("Nothing").end();
+}
 
-  async function quickstart() {
-    // The kind for the new entity
-    const kind = "Task";
+function hash256(input: string) {
+  return crypto.createHash("sha256").update(input).digest("hex");
+}
 
-    // The name/ID for the new entity
-    const name = "sampletask1";
+async function checkUser(
+  username: string,
+  password: string | undefined = undefined
+): Promise<boolean> {
+  const kind = "users";
 
-    // The Cloud Datastore key for the new entity
-    const taskKey = datastore.key([kind, name]);
+  const key = datastore.key([kind, "edgeboyo"]);
 
-    // Prepares the new entity
-    const task = {
-      key: taskKey,
-      data: {
-        description: "Buy milk",
-      },
-    };
+  const response = await datastore.get(key);
 
-    // Saves the entity
-    await datastore.save(task);
+  if (!("length" in response) || response.length != 1 || response[0] == null)
+    return false;
 
-    return `Saved ${task.key.name}: ${task.data.description}`;
+  const [user] = response;
+
+  if (password != undefined) {
+    const passwordHash = hash256(password);
+
+    if (password !== user.password) {
+      return false;
+    }
   }
-  const resp = await quickstart();
 
-  return res.status(200).send(resp).end();
+  return true;
+}
+
+async function createUser(req: any, res: any) {
+  const kind = "users";
+
+  const user: RawUser = req.body;
+
+  if (await checkUser(user.username)) {
+    return res.status(409).send("This user already exists").end();
+  }
+
+  const savedUser = Object.fromEntries(
+    Object.entries(user).map(([key, value]) => {
+      if (key == "rawPassword") return ["password", hash256(user.rawPassword)];
+      return [key, value];
+    })
+  );
+
+  const name = savedUser.username;
+
+  // The Cloud Datastore key for the new entity
+  const key = datastore.key([kind, name]);
+
+  const userObj = {
+    key,
+    data: savedUser,
+  };
+
+  const response = await datastore.save(userObj);
+
+  return res.status(200).send("User created successfully").end();
+}
+
+async function login(req: any, res: any) {
+  const user: RawUser = req.body;
+
+  if (await checkUser(user.username, user.rawPassword)) {
+    return res.status(200).send("User created successfully").end();
+  } else {
+    return res.status(401).send("Unauthorized").end();
+  }
 }
 
 export function setUpApi(app: any) {
   app.get("/api/", apiDebug);
+
+  app.post("/api/users/", createUser);
+
+  app.get("/api/users/", login);
 }

@@ -7,6 +7,7 @@ import { setUpApi } from "./api/api";
 config();
 
 export const app = express();
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.status(200).send("Hello, world!").end();
