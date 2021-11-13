@@ -1,6 +1,8 @@
 import { app } from "../app";
 import { Datastore } from "@google-cloud/datastore";
 
+const datastore = new Datastore();
+
 export async function apiDebug(req: any, res: any) {
   // Creates a client
   const datastore = new Datastore();
@@ -25,7 +27,6 @@ export async function apiDebug(req: any, res: any) {
 
     // Saves the entity
     await datastore.save(task);
-    console.log();
 
     return `Saved ${task.key.name}: ${task.data.description}`;
   }
