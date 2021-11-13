@@ -1,5 +1,9 @@
 import express from "express";
-import {Client} from "@googlemaps/google-maps-services-js";
+import { Client } from "@googlemaps/google-maps-services-js";
+
+import { config } from "dotenv";
+
+config();
 
 export const app = express();
 
@@ -27,20 +31,19 @@ function initMap(): void {
 }
 */
 
-
 const client = new Client({});
 
 client
-    .elevation({
-      params: {
-        locations: [{ lat: 50.937349, lng: -1.397909 }],
-        key: "AIzaSyBrKxAzgRxjQLebkixdmaTHHC7e9kB1rjo",
-      },
-      timeout: 1000, // milliseconds
-    })
-    .then((r) => {
-      console.log(r.data.results[0].elevation);
-    })
-    .catch((e) => {
-      console.log(e.response.data.error_message);
-    });
+  .elevation({
+    params: {
+      locations: [{ lat: 50.937349, lng: -1.397909 }],
+      key: process.env.GOOGLE_MAPS_API_KEY || "",
+    },
+    timeout: 1000, // milliseconds
+  })
+  .then((r) => {
+    console.log(r.data.results[0].elevation);
+  })
+  .catch((e) => {
+    console.log(e.response.data.error_message);
+  });
