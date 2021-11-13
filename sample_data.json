@@ -1,0 +1,8 @@
+{
+  "id": 1234567890,
+  "name": "Food Truck LLC",
+  "location": {
+    "type": "Address"
+  },
+  "creationDateTime": 12368164981848963273409
+}

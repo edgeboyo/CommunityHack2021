@@ -1,10 +1,15 @@
 import express from "express";
 import { config } from "dotenv";
+import { setUpApi } from "./api/api";
 import path from "path";
+import cookieParser from "cookie-parser";
 
 config();
 
 export const app = express();
+app.use(express.json());
+app.use(cookieParser());
+
 const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
@@ -15,6 +20,8 @@ app.get("*", (req, res) => {
   console.log(req.originalUrl);
   res.sendFile(path.join(__dirname + `/client${req.originalUrl}`));
 });
+
+setUpApi(app);
 
 // Start the server
 app.listen(PORT, () => {

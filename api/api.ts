@@ -1,3 +1,12 @@
-import { app } from "../app";
+import { ret } from "../utils";
+import { setUpUserApi } from "./userApi";
 
-app.post("/api/stores/", (req, res) => {});
+async function apiDebug(req: any, res: any) {
+  return ret(res, "Nothing");
+}
+
+export function setUpApi(app: any) {
+  app.get("/api/", apiDebug);
+
+  setUpUserApi(app);
+}
