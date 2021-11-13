@@ -3,7 +3,7 @@ import { Datastore } from "@google-cloud/datastore";
 
 const datastore = new Datastore();
 
-export async function apiDebug(req: any, res: any) {
+async function apiDebug(req: any, res: any) {
   // Creates a client
   const datastore = new Datastore();
 
@@ -33,4 +33,8 @@ export async function apiDebug(req: any, res: any) {
   const resp = await quickstart();
 
   return res.status(200).send(resp).end();
+}
+
+export function setUpApi(app: any) {
+  app.get("/api/", apiDebug);
 }
