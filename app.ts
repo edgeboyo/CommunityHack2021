@@ -1,9 +1,6 @@
 import express from "express";
-import React from 'react';
-import { useWindowDimensions } from 'react-native';
-import RenderHtml from 'react-native-render-html';
-import { Client } from "@googlemaps/google-maps-services-js";
 import { config } from "dotenv";
+import path from "path";
 
 config();
 
@@ -11,15 +8,15 @@ export const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
-  res.status(200).send('Hello world!').end();
+  res.status(200).send("Hello world!").end();
 });
 
 let map: google.maps.Map;
 function initMap(): void {
-    map = new google.maps.Map(document.getElementById("Map") as HTMLElement, {
-        center: { lat: 50.937349, lng: -1.397909},
-        zoom: 8,
-    });
+  map = new google.maps.Map(document.getElementById("Map") as HTMLElement, {
+    center: { lat: 50.937349, lng: -1.397909 },
+    zoom: 8,
+  });
 }
 
 // Start the server
@@ -30,6 +27,11 @@ app.listen(PORT, () => {
 });
 // [END gae_node_request_example]
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/index.html"));
+});
+
+/*
 const client = new Client({});
 
 client
@@ -47,13 +49,13 @@ client
     console.log(e.response.data.error_message);
   });
 
-/*
+
 const source = {
     html: `<iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJKeyH6vVzdEgRVp9Uu4KZl1M&key=AIzaSyBmoJGxjYSO1MToeKhfM9Cz6-dMB4i2-Tg"></iframe>`
 };
 */
 
-
+/*
 const source = {
     html: `
 <p style='text-align:center;'>
@@ -70,3 +72,4 @@ export default function App() {
         />
     );
 }
+*/
