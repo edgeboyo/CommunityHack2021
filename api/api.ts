@@ -3,12 +3,12 @@ import { Datastore } from "@google-cloud/datastore";
 
 import crypto from "crypto";
 import { RawUser, User } from "../data/User";
-import { checkFileds } from "../utils";
+import { checkFields, ret } from "../utils";
 
 const datastore = new Datastore();
 
 async function apiDebug(req: any, res: any) {
-  return res.status(200).send("Nothing").end();
+  return ret(res, "Nothing");
 }
 
 function hash256(input: string) {
@@ -41,6 +41,48 @@ async function checkUser(
   return true;
 }
 
+async function updateUser(req: any, res: any) {
+  const user = req.body;
+
+  const requiredFields = ["username", "rawPassword"];
+
+  const fieldAudit = checkFields(requiredFields, user);
+  if (fieldAudit.length !== 0) {
+    return res
+      .status(401)
+      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
+      .end();
+  }
+
+  checkUser(user.username, user.rawPassword);
+
+  if (!(await checkUser(user.username, user.rawPassword))) {
+    return ret(res, "Unauthorized", 401);
+  }
+
+  const kind = "users";
+
+  const key = datastore.key([kind, user.username]);
+
+  const [userRet]: User[] = await datastore.get(key);
+
+  const newObject = Object.fromEntries(
+    Object.entries(userRet).map(([key, value]) => {
+      if (key === "rawPassword") return ["password", value];
+      if (key in user) return [key, user[key]];
+      return [key, value];
+    })
+  );
+
+  if ("newPassword" in user) {
+    newObject["password"] = hash256(user["newPassword"]);
+  }
+
+  await datastore.save({ key, data: newObject });
+
+  return ret(res, "User updated successfully");
+}
+
 async function createUser(req: any, res: any) {
   const kind = "users";
 
@@ -48,7 +90,7 @@ async function createUser(req: any, res: any) {
 
   const requiredFields = ["username", "email", "rawPassword"];
 
-  const fieldAudit = checkFileds(requiredFields, user);
+  const fieldAudit = checkFields(requiredFields, user);
   if (fieldAudit.length !== 0) {
     return res
       .status(401)
@@ -57,7 +99,7 @@ async function createUser(req: any, res: any) {
   }
 
   if (await checkUser(user.username)) {
-    return res.status(409).send("This user already exists").end();
+    return ret(res, "This user already exists", 409);
   }
 
   const savedUser = Object.fromEntries(
@@ -79,7 +121,7 @@ async function createUser(req: any, res: any) {
 
   const response = await datastore.save(userObj);
 
-  return res.status(200).send("User created successfully").end();
+  return ret(res, "User created successfully");
 }
 
 async function login(req: any, res: any) {
@@ -87,18 +129,15 @@ async function login(req: any, res: any) {
 
   const requiredFields = ["username", "rawPassword"];
 
-  const fieldAudit = checkFileds(requiredFields, user);
+  const fieldAudit = checkFields(requiredFields, user);
   if (fieldAudit.length !== 0) {
-    return res
-      .status(401)
-      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
-      .end();
+    return ret(res, `Missing field(s) ${JSON.stringify(fieldAudit)}`, 401);
   }
 
   if (await checkUser(user.username, user.rawPassword)) {
-    return res.status(200).send("User logged-in successfully").end();
+    return ret(res, "User logged-in successfully");
   } else {
-    return res.status(401).send("Unauthorized").end();
+    return ret(res, "Unauthorized", 401);
   }
 }
 
@@ -108,4 +147,6 @@ export function setUpApi(app: any) {
   app.get("/api/users/", login);
 
   app.post("/api/users/", createUser);
+
+  app.put("/api/users/", updateUser);
 }
