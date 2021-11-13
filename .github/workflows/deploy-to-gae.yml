@@ -1,13 +1,11 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Deploy to GAE
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -36,6 +34,11 @@ jobs:
         with:
           project_id: ${{ secrets.PROJECT_ID }}
           service_account_key: ${{ secrets.GOOGLE_CLOUD_CREDS }}
+          
+      - name: Save .env file
+        run: |
+          touch .env
+          echo GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
           
       # Runs a set of commands using the runners shell
       - name: Deploy project
