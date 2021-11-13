@@ -1,6 +1,6 @@
 import express from "express";
 
-const app = express();
+export const app = express();
 
 app.get("/", (req, res) => {
   res.status(200).send("Hello, world!").end();
