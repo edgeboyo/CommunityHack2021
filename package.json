@@ -17,6 +17,7 @@
     "test": "mocha --exit test/*.test.js"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.2",
     "express": "^4.17.1"
   },
   "devDependencies": {
