@@ -4,3 +4,6 @@ node_modules
 # dot files
 .*
 !.gitignore
+
+# JS files
+*.js
