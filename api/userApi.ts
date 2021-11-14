@@ -1,4 +1,3 @@
-import { app } from "../app";
 import { Datastore } from "@google-cloud/datastore";
 
 import crypto from "crypto";
