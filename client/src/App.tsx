@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import HomePage from "./HomePage";
+import HomePage from "./HomePage/HomePage";
+import Login from "./Login/Login";
 
 export default function App() {
   return (
@@ -9,6 +10,7 @@ export default function App() {
             renders the first one that matches the current URL. */}
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,14 @@
+.column {
+  padding: 25px;
+  float: left;
+  width: 50%;
+  text-align: center;
+  align-items: center;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

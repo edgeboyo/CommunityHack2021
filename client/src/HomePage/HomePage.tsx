@@ -1,9 +1,8 @@
-import "antd/dist/antd.css";
 import "./HomePage.css";
 
 import { Layout, Menu, Breadcrumb } from "antd";
 
-import logo from "./icons/betterLogo.png";
+import logo from "../icons/betterLogo.png";
 
 const { Header, Content, Footer } = Layout;
 
