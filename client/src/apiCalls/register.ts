@@ -1,5 +1,4 @@
-import fetch from "node-fetch";
-import { BASE_URL } from "./apiConfig";
+import { post } from "./apiConfig";
 
 export async function registerUser(
   username: string,
@@ -12,13 +11,7 @@ export async function registerUser(
     rawPassword: password,
   };
 
-  const response = await fetch(`${BASE_URL}users`, {
-    method: "post",
-    body: JSON.stringify(requestObject),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await post(requestObject, "users");
 
   const data: any = await response.json();
   data["status"] = response.status;

@@ -5,7 +5,7 @@ import { checkFields, ret } from "../utils";
 import { checkLoginCookie } from "./cookies";
 import { CoordinateLocation, AddressLocation } from "../data/Location";
 import { TimeRange, Schedule } from "../data/Schedule";
-import {Store} from "../data/Store";
+import { Store } from "../data/Store";
 import crypto from "crypto";
 
 const datastore = new Datastore();
@@ -15,15 +15,15 @@ async function setUpStore(req: any, res: any) {
   const kind = "stores";
   const store: Store = req.body;
   const requiredFields = ["name", "description", "location", "schedule"];
-  const d = new Date ();
+  const d = new Date();
   let id: string;
 
   const fieldAudit = checkFields(requiredFields, store);
-  if(fieldAudit.length !== 0) {
+  if (fieldAudit.length !== 0) {
     return res
-        .status(401)
-        .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
-        .end();
+      .status(401)
+      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
+      .end();
   }
 
   if (owner === undefined) {
@@ -32,9 +32,9 @@ async function setUpStore(req: any, res: any) {
     id = hash256(store.name + owner + d.getTime());
   }
 
-  store ["id"] = id;
+  store["id"] = id;
   const name = store.name;
-  const key = datastore.key( [kind, id] );
+  const key = datastore.key([kind, id]);
 
   const storeObj = {
     key,
@@ -55,9 +55,9 @@ async function updateStore(req: any, res: any) {
   const fieldAudit = checkFields(requiredFields, newStore);
   if (fieldAudit.length !== 0) {
     return res
-        .status(401)
-        .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
-        .end();
+      .status(401)
+      .send(`Missing field(s) ${JSON.stringify(fieldAudit)}`)
+      .end();
   }
 
   const id = newStore.id;
@@ -67,11 +67,11 @@ async function updateStore(req: any, res: any) {
 
   if (storeRet == undefined) {
     return res
-        .status(401)
-        .send(`Cannot find Store ${JSON.stringify(fieldAudit)}`)
-        .end();
+      .status(401)
+      .send(`Cannot find Store ${JSON.stringify(fieldAudit)}`)
+      .end();
   }
-
+  /*
   const storedStore = Object.fromEntries(
       Object.entries(storeRet).map(([key, value]) => {
         if(key === "name") return ["name", newStore.name];
@@ -79,16 +79,14 @@ async function updateStore(req: any, res: any) {
         if(key ===)
         return [key, value];
       })
-  )
+  )*/
 }
 
-async function getStores(req: any, res: any) {
+async function getStores(req: any, res: any) {}
 
-}
-
-async function checkStore( id: string ): Promise<boolean> {
+async function checkStore(id: string): Promise<boolean> {
   const kind = "stores";
-  const key = datastore.key( [kind, id] );
+  const key = datastore.key([kind, id]);
   const response = await datastore.get(key);
 
   if (!("length" in response) || response.length != 1 || response[0] == null)
@@ -96,12 +94,14 @@ async function checkStore( id: string ): Promise<boolean> {
 
   const [store] = response;
 
-  if ( id !== store.id ) { return false; }
+  if (id !== store.id) {
+    return false;
+  }
 
   return true;
 }
 
-  function hash256(input: string) {
+function hash256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
 

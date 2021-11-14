@@ -2,15 +2,17 @@ import { Button, Checkbox, Divider, Form, Input } from "antd";
 import "antd/dist/antd.css";
 import { stat } from "fs";
 import { useEffect, useState } from "react";
+import { loginUser } from "../apiCalls/login";
 import { registerUser } from "../apiCalls/register";
 
 import "./Login.css";
 
-export default function Login() {
+export default function Login(props: any) {
+  const { setToken } = props;
   return (
     <>
       <div className="row">
-        <LoginForm />
+        <LoginForm setToken={setToken} />
         {/*<Divider  type="vertical" />*/}
         <RegisterForm />
       </div>
@@ -18,10 +20,20 @@ export default function Login() {
   );
 }
 
-const LoginForm = () => {
+const LoginForm = (props: any) => {
+  const { setToken } = props;
+
+  const [response, setResponse] = useState("");
   const onFinish = async (values: any) => {
-    console.log(values);
+    const resp = await loginUser(values["username"], values["password"]);
+
+    setResponse(JSON.stringify(resp, null, "\t"));
   };
+
+  useEffect(() => {
+    console.log(response);
+    console.log(setToken);
+  }, [response]);
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
