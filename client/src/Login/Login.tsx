@@ -12,13 +12,13 @@ import PropTypes from "prop-types";
 import "./Login.css";
 
 export default function Login(props: any) {
-  const { setToken } = props;
+  const { setToken, setUser } = props;
   return (
     <>
       <div className="row">
-        <LoginForm setToken={setToken} />
+        <LoginForm setToken={setToken} setUser={setUser} />
         {/*<Divider  type="vertical" />*/}
-        <RegisterForm />
+        <RegisterForm setToken={setToken} setUser={setUser} />
       </div>
     </>
   );
@@ -26,10 +26,11 @@ export default function Login(props: any) {
 
 Login.propTypes = {
   setToken: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 
 const LoginForm = (props: any) => {
-  const { setToken } = props;
+  const { setToken, setUser } = props;
 
   const [response, setResponse] = useState("");
   const navigate = useNavigate();
@@ -37,17 +38,14 @@ const LoginForm = (props: any) => {
   const onFinish = async (values: any) => {
     const resp = await loginUser(values["username"], values["password"]);
 
-    setResponse(JSON.stringify(resp, null, "\t"));
-
-    setToken(JSON.stringify(resp, null, "\t"));
-
-    navigate("/");
+    if (resp.status === 200) {
+      setToken(resp.token);
+      setUser(resp.user);
+      navigate("/");
+    } else {
+      window.alert(JSON.stringify(resp, null, "\t"));
+    }
   };
-
-  useEffect(() => {
-    console.log(response);
-    console.log(setToken);
-  }, [response]);
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
@@ -112,10 +110,13 @@ const LoginForm = (props: any) => {
 
 LoginForm.propTypes = {
   setToken: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 
-const RegisterForm = () => {
+const RegisterForm = (props: any) => {
+  const { setUser, setToken } = props;
   const [response, setResponse] = useState("");
+  const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
     const resp = await registerUser(
@@ -124,7 +125,13 @@ const RegisterForm = () => {
       values["password"]
     );
 
-    setResponse(JSON.stringify(resp, null, "\t"));
+    if (resp.status === 200) {
+      setToken(resp.token);
+      setUser(resp.user);
+      navigate("/");
+    } else {
+      window.alert(JSON.stringify(resp, null, "\t"));
+    }
   };
 
   useEffect(() => {
@@ -216,4 +223,9 @@ const RegisterForm = () => {
       </Form.Item>
     </Form>
   );
+};
+
+RegisterForm.propTypes = {
+  setToken: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
 };

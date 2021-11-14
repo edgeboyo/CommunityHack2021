@@ -117,7 +117,13 @@ async function createUser(req: any, res: any) {
 
   const response = await datastore.save(userObj);
 
-  return ret(res, "User created successfully");
+  const token = logToken(user.username);
+
+  return ret(res, {
+    username: name,
+    token,
+    message: "User created successfully",
+  });
 }
 
 async function login(req: any, res: any) {
@@ -139,7 +145,11 @@ async function login(req: any, res: any) {
   res.cookie("token", token);
 
   if (await checkUser(user.username, user.rawPassword)) {
-    return ret(res, "User logged-in successfully");
+    return ret(res, {
+      username: user.username,
+      token,
+      message: "User logged-in successfully",
+    });
   } else {
     return ret(res, "Unauthorized", 401);
   }
