@@ -1,12 +1,18 @@
 import "./HomePage.css";
 
 import { Layout, Menu, Breadcrumb } from "antd";
+import PropTypes from "prop-types";
 
 import logo from "../icons/betterLogo.png";
 
 const { Header, Content, Footer } = Layout;
 
-function HomePage() {
+function HomePage(props: any) {
+  const { token } = props;
+
+  const loginMessage =
+    token === undefined ? "Login / Signup" : "User dashboard";
+
   return (
     <>
       <Layout className="layout">
@@ -27,7 +33,7 @@ function HomePage() {
           >
             <Menu.Item key="1">Search</Menu.Item>
             <Menu.Item key="2">
-              <a href="/login">Login / Signup</a>
+              <a href="/login">{loginMessage}</a>
             </Menu.Item>
           </Menu>
         </Header>

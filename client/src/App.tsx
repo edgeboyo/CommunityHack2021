@@ -6,17 +6,11 @@ import Login from "./Login/Login";
 export default function App() {
   const [token, setToken] = useState(undefined);
 
-  if (!token) {
-    return <Login props={{ token: token, setToken: setToken }} />;
-  }
-
   return (
     <Router>
-      {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<HomePage token={token} />} />
+        <Route path="/login" element={<Login setToken={setToken} />} />
       </Routes>
     </Router>
   );

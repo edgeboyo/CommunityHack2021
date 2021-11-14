@@ -7,7 +7,6 @@ export async function get(obj: Object, pathEnding: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include",
   });
 }
 

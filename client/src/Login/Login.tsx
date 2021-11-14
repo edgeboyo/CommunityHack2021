@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { loginUser } from "../apiCalls/login";
 import { registerUser } from "../apiCalls/register";
 
+import { useNavigate } from "react-router-dom";
+
+import PropTypes from "prop-types";
+
 import "./Login.css";
 
 export default function Login(props: any) {
@@ -20,14 +24,24 @@ export default function Login(props: any) {
   );
 }
 
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired,
+};
+
 const LoginForm = (props: any) => {
   const { setToken } = props;
 
   const [response, setResponse] = useState("");
+  const navigate = useNavigate();
+
   const onFinish = async (values: any) => {
     const resp = await loginUser(values["username"], values["password"]);
 
     setResponse(JSON.stringify(resp, null, "\t"));
+
+    setToken(JSON.stringify(resp, null, "\t"));
+
+    navigate("/");
   };
 
   useEffect(() => {
@@ -94,6 +108,10 @@ const LoginForm = (props: any) => {
       </Form.Item>
     </Form>
   );
+};
+
+LoginForm.propTypes = {
+  setToken: PropTypes.func.isRequired,
 };
 
 const RegisterForm = () => {
