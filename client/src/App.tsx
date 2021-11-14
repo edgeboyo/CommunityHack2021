@@ -3,6 +3,7 @@
 import React, {FC, useLayoutEffect} from 'react';
 import { useState, useEffect } from 'react';
 import { Button, Layout, Menu, Breadcrumb } from 'antd';
+import Login from 'ant-design-pro/lib/Login';
 import './App.css';
 import logoRaw from './icons/betterLogo.png';
 const logo = <img src={logoRaw}/>;
