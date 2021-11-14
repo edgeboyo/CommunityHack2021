@@ -1,21 +1,26 @@
 import { Button, Checkbox, Divider, Form, Input } from "antd";
 import "antd/dist/antd.css";
+import { stat } from "fs";
+import { useEffect, useState } from "react";
+import { registerUser } from "../apiCalls/register";
 
 import "./Login.css";
 
 export default function Login() {
   return (
-    <div className="row">
-      <LoginForm />
-      {/*<Divider  type="vertical" />*/}
-      <RegisterForm />
-    </div>
+    <>
+      <div className="row">
+        <LoginForm />
+        {/*<Divider  type="vertical" />*/}
+        <RegisterForm />
+      </div>
+    </>
   );
 }
 
 const LoginForm = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: any) => {
+    console.log(values);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -80,9 +85,21 @@ const LoginForm = () => {
 };
 
 const RegisterForm = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const [response, setResponse] = useState("");
+
+  const onFinish = async (values: any) => {
+    const resp = await registerUser(
+      values["username"],
+      values["email"],
+      values["password"]
+    );
+
+    setResponse(JSON.stringify(resp, null, "\t"));
   };
+
+  useEffect(() => {
+    console.log(response);
+  }, [response]);
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
@@ -119,8 +136,34 @@ const RegisterForm = () => {
       </Form.Item>
 
       <Form.Item
+        label="Email"
+        name="email"
+        rules={[
+          {
+            required: true,
+            message: "Please input your email!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
         label="Password"
         name="password"
+        rules={[
+          {
+            required: true,
+            message: "Please input your password!",
+          },
+        ]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item
+        label="Confirm password"
+        name="confirm-password"
         rules={[
           {
             required: true,

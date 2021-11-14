@@ -26,7 +26,9 @@ function HomePage() {
             style={{ lineHeight: "64px" }}
           >
             <Menu.Item key="1">Search</Menu.Item>
-            <Menu.Item key="2">Login / Signup</Menu.Item>
+            <Menu.Item key="2">
+              <a href="/login">Login / Signup</a>
+            </Menu.Item>
           </Menu>
         </Header>
         <Content style={{ padding: "0 50px", height: "80vh" }}>
