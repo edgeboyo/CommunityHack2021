@@ -167,7 +167,7 @@ async function logToken(username: string) {
 }
 
 export function setUpUserApi(app: any) {
-  app.get("/api/users/", login);
+  app.post("/api/users/login", login);
 
   app.post("/api/users/", createUser);
 
