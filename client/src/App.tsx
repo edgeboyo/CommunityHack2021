@@ -11,7 +11,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage token={token} />} />
+        <Route path="/" element={<HomePage token={token} user={user} />} />
         <Route
           path="/login"
           element={<Login setToken={setToken} setUser={setUser} />}

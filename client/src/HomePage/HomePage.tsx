@@ -4,14 +4,17 @@ import { Layout, Menu, Breadcrumb } from "antd";
 import PropTypes from "prop-types";
 
 import logo from "../icons/betterLogo.png";
+import { Link } from "react-router-dom";
 
 const { Header, Content, Footer } = Layout;
 
 function HomePage(props: any) {
-  const { token } = props;
+  const { token, user } = props;
 
   const loginMessage =
     token === undefined ? "Login / Signup" : "User dashboard";
+
+  const loginLink = token === undefined ? "/login" : "/dash";
 
   return (
     <>
@@ -33,7 +36,13 @@ function HomePage(props: any) {
           >
             <Menu.Item key="1">Search</Menu.Item>
             <Menu.Item key="2">
-              <a href="/login">{loginMessage}</a>
+              <Link
+                to={{
+                  pathname: loginLink,
+                }}
+              >
+                {loginMessage}
+              </Link>
             </Menu.Item>
           </Menu>
         </Header>
